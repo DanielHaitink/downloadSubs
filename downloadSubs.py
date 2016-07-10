@@ -1,10 +1,13 @@
 import sys, os, subprocess, re
 
 maps = []
+#Default languages which are searched for
 languages = ["nl","en"]
 
 #Recursion in maps
 SET_RECURSION = False
+#Print the progress
+SET_PRINT = False
 #Languages which has to be searched
 ITERATION_LANG = False
 
@@ -35,7 +38,8 @@ def listFiles(dir):
 def findSub(file):
 	for lang in languages:
 		command = "subliminal download -l "+ lang+" \""+file+"\""
-		print(command)
+		if SET_PRINT:
+			print(command)
 		process = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE)
 		output = process.stdout.read()
 		#print("FINDSUB"+str(output))
@@ -45,8 +49,9 @@ def exploreMaps(dir):
 	allFiles = listFiles(dir)
 	for currentFile in allFiles:
 		newFile = str(dir) + "/"  + str(currentFile)
-		if SET_RECURSION & isMap(newFile):
-			exploreMaps(newFile)
+		if  isMap(newFile):
+			if SET_RECURSION:
+				exploreMaps(newFile)
 		elif isVideo(newFile):
 			findSub(newFile)
 	return
@@ -63,8 +68,10 @@ for arg in sys.argv:
 	if isArg(arg, "-r"):
 		SET_RECURSION = True
 	if isArg(arg, "-l"):
-		print("OOVERWRITING DEFAULT LANGAUGE SETTINGS" ,stderr)
+		print("OVERWRITING DEFAULT LANGAUGE SETTINGS" ,file=stderr)
 		ITERATION_LANG = True
+	if isArg(arg, "-print"):
+		SET_PRINT = True
 	if isMap(arg):
 		maps.append(arg)
 
