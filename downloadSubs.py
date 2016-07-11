@@ -8,6 +8,8 @@ languages = ["nl","en"]
 SET_RECURSION = False
 #Print the progress
 SET_PRINT = False
+#Only new videos without subs in that language
+SET_NEW = False
 #Languages which has to be searched
 ITERATION_LANG = False
 
@@ -35,28 +37,37 @@ def listFiles(dir):
 	return os.listdir(dir)
 
 #Find and download subs for file
-def findSub(file):
-	for lang in languages:
-		command = "subliminal download -l "+ lang+" \""+file+"\""
-		if SET_PRINT:
-			print(command)
-		process = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE)
-		output = process.stdout.read()
-		# TODO see what subs are downloaded and report nicely
-		#print("FINDSUB"+str(output))
+def findSub(file,lang):
+	command = "subliminal download -l "+ lang+" \""+file+"\""
+	if SET_PRINT:
+		print(command)
+	process = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE)
+	output = process.stdout.read()
+	# TODO see what subs are downloaded and report nicely
+	#print("FINDSUB"+str(output))
+
+def noSub(file, allFiles, lang):
+	videoName = os.path.splitext(file)[0]
+	for f in allFiles:
+		if (videoName in f) & (str(f).endswith(str(lang)+".srt")):
+			return False
+	return True
+
 
 #recursive functions which checks all files if they are a video, if so download subs, else go into map (if recursion is on)
 def exploreMaps(dir):
 	allFiles = listFiles(dir)
 	for currentFile in allFiles:
-		if !str(dir).endswith("/"):
+		if not str(dir).endswith("/"):
 			dir = str(dir) + "/"
-		newFile = str(dir) + "/"  + str(currentFile)
+		newFile = str(dir) + str(currentFile)
 		if  isMap(newFile):
 			if SET_RECURSION:
 				exploreMaps(newFile)
 		elif isVideo(newFile):
-			findSub(newFile)
+			for lang in languages:
+				if (not SET_NEW) | (SET_NEW & noSub(currentFile, allFiles, lang)):
+					findSub(newFile, lang)
 	return
 
 #check if dir(s) are given
@@ -71,10 +82,12 @@ for arg in sys.argv:
 	elif isArg(arg, "-r"):
 		SET_RECURSION = True
 	elif isArg(arg, "-l"):
-		print("OVERWRITING DEFAULT LANGAUGE SETTINGS" ,file=stderr)
+		print("OVERWRITING DEFAULT LANGAUGE SETTINGS", file=sys.stderr)
 		ITERATION_LANG = True
 	elif isArg(arg, "-print"):
 		SET_PRINT = True
+	elif isArg(arg, "-new"):
+		SET_NEW = True
 	elif isMap(arg):
 		maps.append(arg)
 
