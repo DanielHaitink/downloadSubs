@@ -42,12 +42,15 @@ def findSub(file):
 			print(command)
 		process = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE)
 		output = process.stdout.read()
+		# TODO see what subs are downloaded and report nicely
 		#print("FINDSUB"+str(output))
 
 #recursive functions which checks all files if they are a video, if so download subs, else go into map (if recursion is on)
 def exploreMaps(dir):
 	allFiles = listFiles(dir)
 	for currentFile in allFiles:
+		if !str(dir).endswith("/"):
+			dir = str(dir) + "/"
 		newFile = str(dir) + "/"  + str(currentFile)
 		if  isMap(newFile):
 			if SET_RECURSION:
@@ -65,14 +68,14 @@ for arg in sys.argv:
 	if ITERATION_LANG:
 		languages = arg.split(",")
 		ITERATION_LANG = False
-	if isArg(arg, "-r"):
+	elif isArg(arg, "-r"):
 		SET_RECURSION = True
-	if isArg(arg, "-l"):
+	elif isArg(arg, "-l"):
 		print("OVERWRITING DEFAULT LANGAUGE SETTINGS" ,file=stderr)
 		ITERATION_LANG = True
-	if isArg(arg, "-print"):
+	elif isArg(arg, "-print"):
 		SET_PRINT = True
-	if isMap(arg):
+	elif isMap(arg):
 		maps.append(arg)
 
 #Make sure the given dirs are a real dir
