@@ -9,9 +9,9 @@ Usage is as follows:
 `python3 downloadSubs.py [commands] "/dir/to/videos" ["more/dirs"]`
 
 The extra parameters are:
-- `-R` for recursive search for video files
+- `-R` to recursively search in given directories for video files
 - `-l lang1,lang2,lang3,...` to override default languages. Languages have to be the default language codes (e.g. nl for Dutch) and they have to be separated by a comma, without spaces.
 - `-print` to see the progress of the subtitle downloading
 - `-new` to only download subtitles for files which don't already have subtitles in the given languages. (The subs do have to be of the format `[VideoName].[language].srt`, so for example: `Zootopia.en.srt`)
 
-So `python3 downloadSubs.py -R -l nl,en,fr "~"` will download French, Dutch and English subtitles for all video files in the home map and all the maps in the home map.
+So `python3 downloadSubs.py -R -l nl,en,fr "~"` will download French, Dutch and English subtitles for all video files in the home map and all the maps in the home dir.
