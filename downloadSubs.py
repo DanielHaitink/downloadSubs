@@ -2,7 +2,7 @@ import sys, os, subprocess, re
 
 maps = []
 #Default languages which are searched for
-languages = ["nl","en"]
+languages = []
 
 #Recursion in maps
 SET_RECURSION = False
@@ -143,6 +143,8 @@ if len(sys.argv) < 2:
 #check input arguments
 for arg in sys.argv:
 	if ITERATION_LANG:
+		if arg == "":
+			sys.exit("No correct languages given")
 		languages = arg.split(",")
 		ITERATION_LANG = False
 	elif ITERATION_LIMIT:
@@ -164,6 +166,9 @@ for arg in sys.argv:
 #Make sure the given dirs are a real dir
 if maps == None or len(maps) < 1:
 	sys.exit("No correct Directories given!")
+
+if languages == []:
+	sys.exit("No languages given!")
 
 #go into recursive function
 for map in maps:
